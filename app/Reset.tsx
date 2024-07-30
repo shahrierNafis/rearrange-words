@@ -1,12 +1,17 @@
 import React from "react";
+
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 function Reset({
@@ -20,20 +25,27 @@ function Reset({
   ) => void;
 }) {
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Button>
-          <RotateCcw />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Are you sure?</DialogTitle>
-          <DialogDescription></DialogDescription>
-          <Button onClick={() => setShuffledWords(null)}>Yes</Button>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
+    <>
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <Button>
+            <RotateCcw />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription></AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction>
+              <Button onClick={() => setShuffledWords(null)}>Yes</Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
