@@ -2,7 +2,6 @@
 import AddSentences from "./AddSentences";
 import useLocalStorageState from "use-local-storage-state";
 import Sentences from "./Sentences";
-import { Button } from "@/components/ui/button";
 import Rearrange from "./Rearrange";
 
 export default function Home() {
@@ -17,17 +16,6 @@ export default function Home() {
         <Sentences {...{ sentences, setSentences }}></Sentences>
         <AddSentences {...{ setSentences }} />
         <Rearrange {...{ sentences, setSentences }}></Rearrange>
-        <Button
-          onClick={() => {
-            setSentences((s) => {
-              const ns = Array.from(s);
-              ns.shift();
-              return ns;
-            });
-          }}
-        >
-          skip
-        </Button>
       </div>
     </>
   );

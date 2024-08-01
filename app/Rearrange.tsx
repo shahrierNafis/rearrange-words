@@ -1,11 +1,9 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Reorder } from "framer-motion";
-import { diffWords } from "diff";
 import useLocalStorageState from "use-local-storage-state";
-import { RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Reset from "./Reset";
+import { Button } from "@/components/ui/button";
 
 function Rearrange({
   sentences,
@@ -18,7 +16,7 @@ function Rearrange({
     Intl.SegmentData[] | null
   >("shuffled", { defaultValue: [] });
 
-  const [text, setText] = useState("");
+  const [words, setWords] = useState<Intl.SegmentData[]>([]);
 
   useEffect(() => {
     const words = Array.from(
@@ -29,7 +27,7 @@ function Rearrange({
         w.index = index;
         return w;
       });
-    setText(words.map((w) => w.segment).join(" "));
+    setWords(words);
     if (shuffledWords?.length) {
       return;
     }
@@ -41,21 +39,36 @@ function Rearrange({
 
   if (!shuffledWords) return <></>;
 
-  const diff = diffWords(shuffledWords.map((x) => x.segment).join(" "), text);
   return (
     <>
       <>
         <Reset {...{ setShuffledWords }} />
-        <div>
-          {diff.map((part) => {
-            const color = part.added ? "red" : part.removed ? "red" : "green";
+        <div className="flex flex-wrap">
+          {shuffledWords.map((w, index) => {
+            const color = words[index]?.segment == w.segment ? "green" : "red";
+
+            let marginLeft = [".", "!", "?", ",", "]"].includes(w.segment)
+              ? "-2.5px"
+              : "2.5px";
+            let marginRight = ["["].includes(w.segment) ? "-2.5px" : "2.5px";
+
+            if (["'", '"', "`"].includes(w.segment)) {
+              const indexCount = shuffledWords
+                .slice(0, index)
+                .filter((w2) => w.segment == w2.segment).length;
+
+              marginLeft = indexCount % 2 ? `-2.5px` : `2.5px`;
+              marginRight = indexCount % 2 ? `2.5px` : `-2.5px`;
+            }
 
             return (
-              <>
-                <div style={{ color }} className={"inline"}>
-                  {!part.added && part.value}
-                </div>
-              </>
+              <div
+                key={w.segment + index}
+                style={{ color, marginLeft, marginRight }}
+                className={""}
+              >
+                {w.segment}
+              </div>
             );
           })}
         </div>
@@ -64,29 +77,36 @@ function Rearrange({
           values={Array.from(shuffledWords)}
           onReorder={(a) => {
             setShuffledWords(a);
-            if (
-              a.every((item, index) => !item.isWordLike || item.index === index)
-            ) {
-              setShuffledWords(null);
-              setSentences((s) => {
-                const ns = Array.from(s);
-                ns.shift();
-                return ns;
-              });
-            }
           }}
           //   className="flex flex-wrap gap-2"
         >
-          {shuffledWords.map((item, index) => (
-            <Reorder.Item
-              key={item.index}
-              value={item}
-              className={"border text-center text-xs"}
-            >
-              {item.segment}
-            </Reorder.Item>
-          ))}
-        </Reorder.Group>
+          {shuffledWords.map((item, index) => {
+            const color =
+              words[index]?.segment == item.segment ? "green" : "red";
+
+            return (
+              <Reorder.Item
+                key={item.index}
+                value={item}
+                style={{ color, borderColor: color }}
+                className={"border text-center text-lg p-2"}
+              >
+                {item.segment}
+              </Reorder.Item>
+            );
+          })}
+        </Reorder.Group>{" "}
+        <Button
+          onClick={() => {
+            setSentences((s) => {
+              const ns = Array.from(s);
+              ns.shift();
+              return ns;
+            });
+          }}
+        >
+          {words.toString() == shuffledWords.toString() ? "skip" : "next"}
+        </Button>
       </>
     </>
   );
