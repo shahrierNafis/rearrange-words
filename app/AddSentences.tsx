@@ -64,7 +64,11 @@ function AddSentences({
                         new Intl.Segmenter("en", {
                           granularity: "sentence",
                         }).segment(text)
-                      ).map((s) => s.segment),
+                      )
+                        .filter((s) => s.segment.trim() !== "")
+                        .map((s) => {
+                          return s.segment.trim();
+                        }),
                     ]);
                   }}
                 >
