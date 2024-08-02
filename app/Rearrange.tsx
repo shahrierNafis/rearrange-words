@@ -103,9 +103,13 @@ function Rearrange({
               ns.shift();
               return ns;
             });
+            setShuffledWords(null);
           }}
         >
-          {words.toString() == shuffledWords.toString() ? "skip" : "next"}
+          {words.map((w) => w.segment).join("") ==
+          shuffledWords.map((w) => w.segment).join("")
+            ? "next"
+            : "skip"}
         </Button>
       </>
     </>
